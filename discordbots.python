@@ -1,0 +1,61 @@
+import discord
+import random
+from gen_pass import sifre
+
+# Ayrıcalıkları ayarla
+intents = discord.Intents.default()
+intents.message_content = True
+client = discord.Client(intents=intents)
+
+
+@client.event
+async def on_ready():
+    print(f'{client.user} olarak giriş yaptık.')
+
+
+@client.event
+async def on_message(message):
+    if message.author == client.user:
+        return
+
+    if message.content.startswith('$merhaba'):
+        await message.channel.send("Selam!")
+
+    elif message.content.startswith('$sifre'):
+        try:
+            uzunluk = int(message.content.split()[1])
+
+            if uzunluk > 0:
+                parola = sifre(uzunluk)
+                await message.channel.send(f"💡 Oluşturulan Parola: `{parola}`")
+
+            else:
+                await message.channel.send("Lütfen pozitif bir sayı girin.")
+        
+        except (IndexError, ValueError):
+
+            await message.channel.send("Doğru kullanım: `$sifre <uzunluk>`")
+
+    elif message.content.startswith('$yazıtura'):
+
+        sonuc = random.choice(["Yazı", "Tura"])
+        await message.channel.send(f"🪙 Sonuç: {sonuc}")
+
+    elif message.content.startswith('$emoji'):
+
+        emojiler = [
+            "😀", "😂", "😍", "😎", "🥳", "🤖",
+            "🦄", "🔥", "🌟", "🍕"
+        ]
+
+        emoji = random.choice(emojiler)
+        await message.channel.send(f"🎉 Rastgele Emoji: {emoji}")
+
+    else:
+        await message.channel.send(
+            "Komut anlaşılmadı! Mevcut komutlar:\n"
+            "$merhaba, $sifre <uzunluk>, $yazıtura, $emoji"
+        )
+
+
+client.run("Tokenssss")
